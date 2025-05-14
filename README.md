@@ -1,4 +1,4 @@
-# 🤷 Blame-as-a-Service 2.0: Now With Extra Scapegoats!
+# 🤷 Blame-as-a-Service
 
 Ever needed someone to blame? Tired of taking responsibility for your own mistakes?  
 This groundbreaking API returns random, creative, and hilariously implausible blame excuses — perfectly suited for any scenario: personal, professional, student life, dev life, or that time you "accidentally" ate your roommate's leftovers.
