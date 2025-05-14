@@ -13,7 +13,7 @@ Built for developers, excuse-makers, and people who definitely didn't break the 
 
 **Base URL**
 ```
-http://localhost:3000/blame
+https://blame-as-a-service.onrender.com/blame
 ```
 
 **Method:** `GET`  
