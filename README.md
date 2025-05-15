@@ -1,5 +1,7 @@
 # 🤷 Blame-as-a-Service (BaaS)
 
+![Blame-as-a-Service](./media/Blame-as-a-Service.png)
+
 Because it's NEVER your fault. Ever.
 
 Tired of taking responsibility for your own mistakes? Need a scapegoat that isn't "the dog ate my homework" or "my grandmother died" (for the fifth time this year)? Our groundbreaking API returns random, creative, and hilariously implausible blame excuses — perfectly suited for any scenario where accountability is an inconvenience you'd rather avoid.
