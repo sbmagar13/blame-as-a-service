@@ -16,7 +16,7 @@ Built by developers who definitely didn't break the build, for developers who de
 
 **Base URL** (Point your finger here)
 ```
-https://blame-as-a-service.onrender.com/blame
+https://baas.budhathokisagar.com.np/blame
 ```
 
 **Method:** `GET` (As in "GET me out of this situation")  
