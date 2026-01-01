@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Blame-as-a-Service - Interactive Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Subtle, sophisticated palette */
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-color: #e5e7eb;
+            --accent: #4f46e5;
+            --accent-light: #6366f1;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 64px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .controls {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.1s forwards;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button {
+            position: relative;
+        }
+
+        button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-4px);
+            background: var(--text-primary);
+            color: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--text-primary);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        button:hover::after,
+        button:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        button:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .blame-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            min-height: 300px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.2s forwards;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .blame-display:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+
+        .blame-display::after {
+            content: attr(data-hover-text);
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .blame-display:hover::after {
+            opacity: 1;
+        }
+
+        .blame-text {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .blame-text p {
+            max-width: 600px;
+        }
+
+        .blame-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .meta-item {
+            background: var(--bg-primary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .meta-item:hover {
+            border-color: var(--text-tertiary);
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .severity-minor {
+            color: var(--success);
+        }
+        .severity-moderate {
+            color: var(--warning);
+        }
+        .severity-catastrophic {
+            color: var(--danger);
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .ascii-display {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            white-space: pre;
+            font-size: 0.7rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            background: var(--bg-primary);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .ascii-display::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .ascii-display::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-radius: 3px;
+        }
+
+        .ascii-display::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .ascii-display::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .quality-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .quality-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.8s ease;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .category-btn {
+            padding: 10px 14px;
+            font-size: 0.8rem;
+        }
+
+        .ascii-style-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .ascii-style-selector button {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 64px;
+            padding: 24px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0 2px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        footer a[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-secondary);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            box-shadow: var(--shadow-md);
+        }
+
+        h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            header {
+                margin-bottom: 40px;
+            }
+
+            .controls, .blame-display {
+                padding: 24px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .blame-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 BLAME-AS-A-SERVICE 🎯</h1>
+            <p class="tagline">Because it's NEVER your fault. Ever.</p>
+        </header>
+
+        <div class="controls">
+            <div class="button-group">
+                <button onclick="getRandomBlame()" data-tooltip="Are you absolutely certain you want to blame someone?">🎲 Random Blame</button>
+                <button onclick="getRichBlame()" data-tooltip="For when you need your excuse to look data-driven">💎 Rich Details</button>
+                <button onclick="getMultipleBlames()" data-tooltip="Because one excuse is never enough these days">🎰 Blame Roulette (3x)</button>
+                <button onclick="toggleASCII()" data-tooltip="Make it look like a legitimate terminal error">🎨 ASCII Art Mode</button>
+            </div>
+
+            <div id="categorySection" style="display: none;">
+                <h3 style="margin-bottom: 10px; text-align: center;">Who shall we blame today?</h3>
+                <div class="categories-grid" id="categoriesGrid"></div>
+            </div>
+        </div>
+
+        <div class="blame-display" id="blameDisplay" data-hover-text="Ready when you are">
+            <div class="blame-text">
+                <p>Select an option above to absolve yourself of responsibility</p>
+            </div>
+        </div>
+
+        <footer>
+            <p style="margin-bottom: 12px; font-size: 0.95rem;">
+                <a href="/docs" target="_blank" title="Documentation you'll actually read? Now that's suspicious">📚 API Documentation</a> ·
+                <a href="/stats" target="_blank" title="See how many people avoided accountability today">📊 Statistics</a> ·
+                <a href="https://github.com/sbmagar13/blame-as-a-service" target="_blank" title="Star this repo, or blame GitHub's algorithm for not showing it">⭐ GitHub</a>
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                Made with 💀 by developers who definitely didn't break production
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        let asciiMode = false;
+        let currentStyle = 'box';
+
+        async function getRandomBlame() {
+            showLoading();
+            try {
+                const response = await fetch('/blame');
+                const data = await response.json();
+                displayBlame(data);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function getRichBlame() {
+            showLoading();
+            try {
+                const response = await fetch('/blame/rich');
+                const data = await response.json();
+                displayRichBlame(data);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function getBlameByCategory(category) {
+            showLoading();
+            try {
+                const response = await fetch(`/blame/category/${category}`);
+                const data = await response.json();
+                displayBlame(data);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function getMultipleBlames() {
+            showLoading();
+            try {
+                if (asciiMode) {
+                    const response = await fetch('/blame/multiple/ascii?count=3');
+                    const data = await response.text();
+                    displayASCII(data);
+                } else {
+                    const response = await fetch('/blame/multiple?count=3');
+                    const data = await response.json();
+                    displayMultipleBlames(data.blames);
+                }
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function getASCIIBlame(style = 'box') {
+            showLoading();
+            try {
+                const response = await fetch(`/blame/ascii?style=${style}`);
+                const data = await response.text();
+                displayASCII(data);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/categories');
+                const data = await response.json();
+                const grid = document.getElementById('categoriesGrid');
+
+                const categoryTooltips = {
+                    'cosmic': 'When the universe itself conspires against your deadline',
+                    'technical': 'It worked on my machine, therefore not my problem',
+                    'management': 'Decisions that were definitely made above your pay grade',
+                    'team': 'Your colleagues will probably have questions about this one',
+                    'environmental': 'Because sometimes the office cat really does deploy to production',
+                    'legacy': 'Code written before you were born is still somehow your fault',
+                    'user': 'They did what now? And they expected it to work?',
+                    'ai_modern': 'The robots are becoming self-aware and making poor choices',
+                    'cloud': 'Someone else\'s computer decided to take a vacation',
+                    'security': 'We encrypted it with ROT13, what more do you want?'
+                };
+
+                grid.innerHTML = data.categories.map(cat =>
+                    `<button class="category-btn" onclick="getBlameByCategory('${cat}')" data-tooltip="${categoryTooltips[cat] || 'Proceed with caution ⚠️'}">${cat.toUpperCase()}</button>`
+                ).join('');
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        function toggleASCII() {
+            asciiMode = !asciiMode;
+            if (asciiMode) {
+                getASCIIBlame(currentStyle);
+            } else {
+                getRandomBlame();
+            }
+        }
+
+        function displayBlame(data) {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Completely believable and definitely not your fault');
+
+            const severityClass = `severity-${data.severity}`;
+            const emoji = getSeverityEmoji(data.severity);
+
+            display.innerHTML = `
+                <div class="blame-text">
+                    <p>"${data.blame}"</p>
+                </div>
+                <div class="blame-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Severity</div>
+                        <div class="meta-value ${severityClass}">${emoji} ${data.severity}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Category</div>
+                        <div class="meta-value">${data.category}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayRichBlame(data) {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Now with professionally fabricated metrics for added credibility');
+
+            const severityClass = `severity-${data.severity.level}`;
+
+            display.innerHTML = `
+                <div class="blame-text">
+                    <p>"${data.blame}"</p>
+                </div>
+                <div class="blame-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Severity</div>
+                        <div class="meta-value ${severityClass}">
+                            ${data.severity.emoji} ${data.severity.name}
+                        </div>
+                        <div style="font-size: 0.75rem; margin-top: 6px; color: var(--text-secondary);">
+                            ${data.severity.description}
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Category</div>
+                        <div class="meta-value">${data.category}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Quality</div>
+                        <div class="meta-value">${data.quality_score}/10</div>
+                        <div class="quality-bar">
+                            <div class="quality-fill" style="width: ${data.quality_score * 10}%"></div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Believability</div>
+                        <div class="meta-value">${data.believability}/10</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 24px; color: var(--text-secondary); font-size: 0.85rem;">
+                    ${data.disclaimer}
+                </div>
+            `;
+        }
+
+        function displayMultipleBlames(blames) {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Triple coverage for when one scapegoat just isn\'t enough');
+
+            const blamesHTML = blames.map((data, index) => {
+                const emoji = getSeverityEmoji(data.severity);
+                const severityClass = `severity-${data.severity}`;
+                return `
+                    <div style="margin-bottom: 20px; padding: 16px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px;">
+                        <div style="font-size: 1rem; margin-bottom: 8px; line-height: 1.6;">
+                            <strong>${index + 1}.</strong> "${data.blame}"
+                        </div>
+                        <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-secondary);">
+                            <span class="${severityClass}">${emoji} ${data.severity}</span>
+                            <span>${data.category}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            display.innerHTML = `
+                <div style="text-align: center; margin-bottom: 24px; font-size: 1.125rem; font-weight: 600; color: var(--text-primary);">
+                    Blame Roulette Results
+                </div>
+                ${blamesHTML}
+            `;
+        }
+
+        function displayASCII(asciiArt) {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Terminal-style formatting for that authentic error message aesthetic');
+
+            display.innerHTML = `
+                <div class="ascii-style-selector">
+                    <button onclick="currentStyle='box'; getASCIIBlame('box')" data-tooltip="Corporate-approved format for your convenience">📦 Box</button>
+                    <button onclick="currentStyle='banner'; getASCIIBlame('banner')" data-tooltip="Extra official, extra convincing, extra unnecessary">🎌 Banner</button>
+                    <button onclick="currentStyle='simple'; getASCIIBlame('simple')" data-tooltip="For when you need to blame quickly and efficiently">📝 Simple</button>
+                    <button onclick="currentStyle='dramatic'; getASCIIBlame('dramatic')" data-tooltip="Maximum visual impact for maximum plausible deniability">⚡ Dramatic</button>
+                </div>
+                <div class="ascii-display">${escapeHtml(asciiArt)}</div>
+            `;
+        }
+
+        function showLoading() {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Crafting your perfectly reasonable explanation');
+            display.innerHTML = '<div class="loading">Generating your excuse... this delay is obviously not our fault</div>';
+        }
+
+        function displayError(error) {
+            const display = document.getElementById('blameDisplay');
+            display.setAttribute('data-hover-text', 'Ironically, we need someone to blame for this');
+            display.innerHTML = `
+                <div class="blame-text">
+                    <p>❌ Error: ${error.message}</p>
+                    <p style="font-size: 0.85rem; margin-top: 12px; color: var(--text-secondary);">
+                        We'd blame someone for this, but that seems a bit too on the nose
+                    </p>
+                </div>
+            `;
+        }
+
+        function getSeverityEmoji(severity) {
+            const emojis = {
+                'minor': '🟢',
+                'moderate': '🟡',
+                'catastrophic': '🔴'
+            };
+            return emojis[severity] || '⚪';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load categories on page load
+        loadCategories();
+
+        // Show category section
+        setTimeout(() => {
+            document.getElementById('categorySection').style.display = 'block';
+        }, 500);
+    </script>
+</body>
+</html>

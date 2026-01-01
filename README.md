@@ -1,148 +1,277 @@
-# 🤷 Blame-as-a-Service (BaaS)
+# 🎯 Blame-as-a-Service (BaaS) v2.0
 
 ![Blame-as-a-Service](./media/Blame-as-a-Service.png)
 
-Because it's NEVER your fault. Ever.
+<div align="center">
 
-Tired of taking responsibility for your own mistakes? Need a scapegoat that isn't "the dog ate my homework" or "my grandmother died" (for the fifth time this year)? Our groundbreaking API returns random, creative, and hilariously implausible blame excuses — perfectly suited for any scenario where accountability is an inconvenience you'd rather avoid.
+### Because it's NEVER your fault. Ever.
 
-Built by developers who definitely didn't break the build, for developers who definitely won't break the build (but absolutely will).
+[![API Status](https://img.shields.io/badge/API-Operational-success?style=for-the-badge)](https://blame-as-a-service.onrender.com)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-00C7B7?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
+
+**100+ Excuses** • **10 Categories** • **ASCII Art** • **Severity Ratings** • **Interactive Demo**
+
+[Live Demo](https://blame-as-a-service.onrender.com/demo) • [API Docs](https://blame-as-a-service.onrender.com/docs) • [Report Bug](https://github.com/sbmagar13/blame-as-a-service/issues)
+
+</div>
+
+---
+
+## 🌟 What's New in v2.0
+
+Tired of taking responsibility for your own mistakes? Need a scapegoat that isn't "the dog ate my homework" or "my grandmother died" (for the fifth time this year)? Our **completely redesigned** API now returns creative, categorized, and hilariously implausible blame excuses with **epic visual displays**!
+
+### ✨ New Features
+
+- 🎨 **ASCII Art Display** - 4 dramatic visualization styles (Box, Banner, Simple, Dramatic)
+- 📊 **Severity Levels** - From "Minor Oopsie" 🟢 to "Catastrophic Disaster" 🔴
+- 🗂️ **10 Categories** - Cosmic, Technical, Management, AI/ML, Cloud, Security, and more
+- 💎 **Rich Details** - Quality scores, believability ratings, and visual elements
+- 🎭 **100+ Excuses** - Expanded from 50 to 100+ carefully crafted excuses
+- 🎰 **Blame Roulette** - Get multiple excuses at once
+- 🌐 **Interactive Demo** - Gorgeous web UI with animations and confetti
+
+Built by developers who definitely didn't break the build, for developers who definitely won't.
 
 > "I would've written a better quote, but my keyboard doesn't have the right keys for profound thoughts." - Blame Scientists
 
 ---
 
-## 🚀 API Usage (For When You Need Someone to Blame ASAP)
+## 🚀 Quick Start
 
-**Base URL** (Point your finger here)
+### Try It Now!
+
+```bash
+# Get a random blame excuse
+curl https://blame-as-a-service.onrender.com/blame
+
+# Get blame as epic ASCII art
+curl https://blame-as-a-service.onrender.com/blame/ascii?style=dramatic
+
+# Get blame from a specific category
+curl https://blame-as-a-service.onrender.com/blame/category/cosmic
+
+# Get multiple blames for extra coverage
+curl https://blame-as-a-service.onrender.com/blame/multiple?count=5
 ```
-https://blame-as-a-service.onrender.com/blame
-```
-
-**Method:** `GET` (As in "GET me out of this situation")  
-**Rate Limit:** `120 requests per minute per IP` (We know you mess up a lot, but come on)
-
-### 🔄 Example Request
-```http
-GET /blame
-```
-
-### ✅ Example Responses (That We've Definitely Used Ourselves)
-
-The API returns a different blame excuse each time, carefully crafted to maximize believability while minimizing your personal responsibility:
-
-```json
-{
-  "blame": "The office cat walked across the keyboard and accidentally deployed to production while simultaneously ordering 13 pizzas to the BOSS's house"
-}
-```
-
-```json
-{
-  "blame": "We followed Stack Overflow advice from a question with -7 votes and marked as 'possible duplicate'"
-}
-```
-
-```json
-{
-  "blame": "The developer was coding during a full moon while Mercury was in retrograde during a solar eclipse on Thursday the 15th"
-}
-```
-
-```json
-{
-  "blame": "The intern thought 'rm -rf /' was the command to refresh the memory"
-}
-```
-
-```json
-{
-  "blame": "Our AI pair programmer started hallucinating and insisted that indentations are optional in Python"
-}
-```
-
-Use it whenever your manager asks why that critical feature is still "almost done" three sprints later, or when you need to explain why production is down at 3 AM (hint: it wasn't you, it was probably Dave from DevOps).
 
 ---
 
-## 🛠️ Self-Hosting (For When You Can't Even Blame Our Servers)
+## 📖 API Endpoints
 
-Want to run it yourself? It's lightweight, simple, and gives you someone else to blame when it inevitably crashes. Plus, you can customize it to include your coworkers' names for extra realism!
+**Base URL:** `https://blame-as-a-service.onrender.com`
+**Rate Limit:** 120 requests/minute/IP (We know you mess up a lot, but come on)
 
-### 1. Clone this repository (Blame Git if it fails)
-```bash
-git clone https://github.com/yourusername/blame-as-a-service.git
-cd blame-as-a-service  # If you get lost here, blame your terminal
+### Core Endpoints
+
+| Endpoint | Description | Example |
+|----------|-------------|---------|
+| `GET /blame` | Random blame excuse | `{"blame": "...", "category": "technical", "severity": "moderate"}` |
+| `GET /blame/rich` | Excuse with quality scores & details | Includes believability, quality scores, severity info |
+| `GET /blame/ascii` | Epic ASCII art format | 4 styles: `box`, `banner`, `simple`, `dramatic` |
+| `GET /blame/category/{category}` | Blame from specific category | Categories: cosmic, technical, management, etc. |
+| `GET /blame/severity/{severity}` | Blame by severity level | Levels: minor, moderate, catastrophic |
+| `GET /blame/multiple` | Multiple excuses at once | Query param: `?count=3` (max 10) |
+
+### Utility Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /categories` | List all available categories |
+| `GET /severity-info` | Information about severity levels |
+| `GET /stats` | API statistics and excuse breakdown |
+| `GET /health` | Health check endpoint |
+
+### 📋 Example Responses
+
+**Simple Blame (`/blame`)**
+```json
+{
+  "blame": "The developer was coding during a full moon while Mercury was in retrograde during a solar eclipse on Thursday the 13th",
+  "category": "cosmic",
+  "severity": "catastrophic"
+}
 ```
 
-### 2. Install dependencies (Blame pip if anything breaks)
-```bash
-pip install -r requirements.txt  # If this fails, it's pip's fault, not yours
+**Rich Blame (`/blame/rich`)**
+```json
+{
+  "blame": "Our AI pair programmer started hallucinating and insisted that indentation is optional in Python",
+  "category": "ai_modern",
+  "severity": {
+    "level": "catastrophic",
+    "emoji": "🔴",
+    "name": "CATASTROPHIC DISASTER",
+    "description": "Career-defining moment. Hope you have a good lawyer.",
+    "numeric": 3,
+    "bar": "▓▓▓▓▓▓▓▓▓▓ 100% 🔥💀🔥"
+  },
+  "quality_score": 9,
+  "believability": 7,
+  "disclaimer": "This excuse is certified 100% not your fault™"
+}
 ```
 
-### 3. Start the server (And prepare your first excuse for when it crashes)
+**ASCII Art (`/blame/ascii?style=banner`)**
+```
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                🚨 OFFICIAL BLAME CERTIFICATE 🚨
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+  The intern thought 'rm -rf /' was a cleaning command
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Severity: 🔴 CATASTROPHIC DISASTER
+  Category: TEAM
+  Excuse Quality: 8/10 ⭐
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+           This excuse has been officially certified by
+                   🏢 Blame-as-a-Service Inc. 🏢
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+```
+
+---
+
+## 📂 Categories
+
+Choose your excuse flavor:
+
+- 🌌 **cosmic** - Blame the universe (Mercury retrograde, solar eclipses, cosmic rays)
+- 💻 **technical** - Classic tech failures (Stack Overflow, database naps, race conditions)
+- 👔 **management** - Blame leadership decisions (pivots, CEO dreams, TED talks)
+- 👥 **team** - Blame your colleagues (interns, breakups, coffee breaks)
+- 🌍 **environmental** - Blame your surroundings (office cats, thermostat, feng shui)
+- 📜 **legacy** - Blame ancient code (COBOL scripts, time bombs from 2008)
+- 👤 **user** - Blame the users (Bobby Tables, refresh enthusiasts)
+- 🤖 **ai_modern** - Blame AI/ML (hallucinating models, sentient deployments)
+- ☁️ **cloud** - Blame the cloud (AWS surprises, serverless rebellion)
+- 🔐 **security** - Blame security fails (password123, ROT13 encryption)
+
+---
+
+## 🛠️ Self-Hosting
+
+Want to run it yourself? It's lightweight, simple, and gives you someone else to blame when it inevitably crashes!
+
+### Quick Start
+
 ```bash
-python blame_app.py  # If this fails, Python is clearly having a bad day
+# 1. Clone the repository
+git clone https://github.com/sbmagar13/blame-as-a-service.git
+cd blame-as-a-service
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run the server
+python blame_app.py
 ```
 
 The API will be live at:
-```
-http://localhost:3000/blame  # If this doesn't work, blame your router
-```
+- **API**: http://localhost:3000/blame
+- **Interactive Demo**: http://localhost:3000/demo
+- **API Docs**: http://localhost:3000/docs
 
-You can also change the port using an environment variable:
+### Custom Port
+
 ```bash
-PORT=5000 python blame_app.py  # If this fails, blame environment variables for being too environmental
+PORT=5000 python blame_app.py
 ```
 
-### 4. API Documentation (That Nobody Will Read Anyway)
-
-FastAPI automatically generates interactive API documentation that's more reliable than your excuses:
-
-- Swagger UI: http://localhost:3000/docs (for people who pretend to understand what they're looking at)
-- ReDoc: http://localhost:3000/redoc (for those who prefer their documentation pretty but still won't read it)
-
----
-
-## 📁 Project Structure (Simpler Than Your Excuses)
+### Project Structure
 
 ```
-blame-as-service/
-├── blame_app.py        # FastAPI application (where the magic happens)
-└── README.md           # The document you're reading instead of fixing bugs
-```
-
-## 🧠 Advanced Blame Optimization™ (Patent Pending)
-
-Our proprietary Blame Optimization Engine™ ensures maximum believability with minimum effort:
-
-1. **Contextual Blame Adaptation**: Automatically adjusts excuses based on time of day (3 AM commits get special treatment because "I was tired" isn't creative enough)
-2. **Blame Recycling**: Sustainable excuse generation that reuses old classics with fresh twists (environmentally friendly blaming)
-3. **Plausible Deniability Index**: Each excuse is rated on a scale from "My dog ate my homework" to "Cosmic ray bit flip in the production database"
-4. **Blame Deflection Technology**: Automatically identifies the most blame-worthy person in your organization (usually the intern or Dave from DevOps)
-5. **Excuse Believability Algorithm**: Uses machine learning to generate excuses that sound just plausible enough that people might not question them
-
----
-
-## 📦 requirements.txt (Things We Blame When Our Code Doesn't Work)
-
-For reference, here's the dependency list:
-
-```
-fastapi==0.115.12      # We blame FastAPI when our routes don't work
-requests==2.32.3       # We blame Requests when APIs don't respond
-slowapi==0.1.9         # We blame SlowAPI when rate limiting breaks
-uvicorn==0.34.2        # We blame Uvicorn when the server crashes
+blame-as-a-service/
+├── blame_app.py          # FastAPI application with all endpoints
+├── blame_data.py         # 100+ excuses organized by category & severity
+├── blame_visualizer.py   # ASCII art generators and formatters
+├── static/
+│   └── demo.html        # Interactive web demo
+├── requirements.txt      # Python dependencies
+└── README.md            # You are here
 ```
 
 ---
 
-## ⚠️ Warning (The Only Time We Take Responsibility)
+## 🎨 Use Cases
 
-Side effects may include: reduced accountability, suspicious looks from colleagues, an inability to take anything seriously, and a strange compulsion to blame inanimate objects for your problems. Not recommended for use in court proceedings, performance reviews, or when explaining to your partner why you forgot your anniversary (though we've tried).
+Perfect for:
+- ✅ Standup meetings when you haven't made progress
+- ✅ Explaining production outages at 3 AM
+- ✅ Code review comments that need... creativity
+- ✅ Slack bot entertainment
+- ✅ Git commit messages (we don't judge)
+- ✅ When your manager asks "why?"
+- ✅ Fun CLI tools and integrations
+- ✅ Learning FastAPI with a hilarious example
+
+---
+
+## 🤝 Contributing
+
+Found a hilarious excuse we missed? Want to add a new category? PRs are welcome!
+
+1. Fork the repository
+2. Add your excuses to `blame_data.py`
+3. Test with `python blame_app.py`
+4. Submit a PR with your best excuse as the description
+
+**Bonus points if your PR message blames someone else for why you're contributing.**
+
+---
+
+## 📊 Stats
+
+```python
+Total Excuses: 100+
+Categories: 10
+Severity Levels: 3
+ASCII Art Styles: 4
+Lines of Blame: ∞
+Responsibility Taken: 0%
+```
+
+---
+
+## 🌟 Show Your Support
+
+If this project helped you avoid accountability, consider:
+- ⭐ Starring the repo (blame GitHub's star system if you forget)
+- 🐛 Reporting issues (blame the bugs, not us)
+- 💬 Sharing with your team (blame them for laughing too hard)
+- 🔀 Forking and customizing (blame your coworkers by name!)
+
+---
 
 ## 📄 License
 
-MIT — do whatever you want with this code, just don't blame yourself when you should be blaming others. When in doubt, remember our company motto: "It wasn't me, it was probably Dave from DevOps." The intern is always a safe choice too. Or Mercury being in retrograde. Or cosmic rays. Or that weird bug that only happens on Tuesdays.
+MIT — Do whatever you want with this code, just don't blame yourself when you should be blaming others.
 
-> "I didn't write this README, my cat did while Mercury was in retrograde during a solar eclipse on a Thursday." - The Developer, definitely not taking responsibility
+When in doubt, remember our company motto:
+> "It wasn't me, it was probably Dave from DevOps."
+
+The intern is always a safe choice too. Or Mercury being in retrograde. Or cosmic rays. Or that weird bug that only happens on Tuesdays. Or the AI that wrote this code. Or the product manager who approved it. Or the coffee machine. Or...
+
+---
+
+## 📞 Support
+
+- 📚 [API Documentation](https://blame-as-a-service.onrender.com/docs)
+- 🎨 [Live Demo](https://blame-as-a-service.onrender.com/demo)
+- 🐛 [Report Issues](https://github.com/sbmagar13/blame-as-a-service/issues)
+- 💬 [Discussions](https://github.com/sbmagar13/blame-as-a-service/discussions)
+
+---
+
+<div align="center">
+
+**Made with 💀 by developers who definitely didn't break production**
+
+*"I didn't write this README, my cat did while Mercury was in retrograde during a solar eclipse on a Thursday."*
+
+[⬆ Back to Top](#-blame-as-a-service-baas-v20)
+
+</div>
