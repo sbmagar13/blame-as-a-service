@@ -2,7 +2,7 @@ import os
 import random
 from typing import Optional, List
 from fastapi import FastAPI, Request, Response, status, Query
-from fastapi.responses import JSONResponse, PlainTextResponse, HTMLResponse, FileResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -64,59 +64,15 @@ except:
 app.include_router(contextual_router)
 
 
-@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/", include_in_schema=False)
 async def root():
-    """Landing page"""
-    return """
-    <html>
-        <head>
-            <title>Blame-as-a-Service</title>
-            <style>
-                body {
-                    font-family: 'Courier New', monospace;
-                    background: #1a1a1a;
-                    color: #00ff00;
-                    padding: 50px;
-                    text-align: center;
-                }
-                h1 { font-size: 3em; margin-bottom: 20px; }
-                a { color: #00ff00; text-decoration: none; padding: 10px 20px;
-                    border: 2px solid #00ff00; margin: 10px; display: inline-block; }
-                a:hover { background: #00ff00; color: #1a1a1a; }
-                a.featured { background: #00ff00; color: #1a1a1a; }
-                a.featured:hover { background: #00cc00; }
-                .blame { background: #2a2a2a; padding: 20px; margin: 30px auto;
-                         max-width: 600px; border: 2px solid #00ff00; }
-            </style>
-        </head>
-        <body>
-            <h1>🎯 BLAME-AS-A-SERVICE 🎯</h1>
-            <p style="font-size: 1.2em;">Because it's NEVER your fault. Ever.</p>
-            <div class="blame">
-                <p>"The developer was coding during a full moon while Mercury was in retrograde
-                   during a solar eclipse on Thursday the 13th"</p>
-            </div>
-            <div>
-                <a class="featured" href="/contextual">🤖 Blame Me Contextually (NEW)</a>
-            </div>
-            <div>
-                <a href="/docs">📚 API Documentation</a>
-                <a href="/demo">🎨 Live Demo</a>
-                <a href="/blame">🎲 Random Blame</a>
-            </div>
-        </body>
-    </html>
-    """
+    """Redirect home to the contextual landing page"""
+    return RedirectResponse(url="/contextual", status_code=302)
 
-
-@app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/demo", include_in_schema=False)
 async def demo_page():
-    """Serve the interactive demo page"""
-    try:
-        with open("static/demo.html", "r") as f:
-            return f.read()
-    except:
-        return "<h1>Demo page not found. Make sure static/demo.html exists.</h1>"
+    """Redirect legacy /demo to the new contextual page"""
+    return RedirectResponse(url="/contextual", status_code=302)
 
 
 # NEW: contextual page
