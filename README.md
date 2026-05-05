@@ -1,60 +1,87 @@
-# 🎯 Blame-as-a-Service (BaaS) v2.0
+# 🎯 Blame-as-a-Service
 
-![Blame-as-a-Service](./media/Blame-as-a-Service.png)
+> Enterprise-grade accountability deflection. Now with AI.
 
 <div align="center">
 
-### Because it's NEVER your fault. Ever.
+![Blame-as-a-Service](./media/Blame-as-a-Service.png)
 
-[![API Status](https://img.shields.io/badge/API-Operational-success?style=for-the-badge)](https://baas.budhathokisagar.com.np)
-[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-00C7B7?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+### Whatever broke, it wasn't you.
+
+[![API Status](https://img.shields.io/badge/Status-Suspiciously_Operational-success?style=for-the-badge)](https://baas.budhathokisagar.com.np)
+[![Compliance](https://img.shields.io/badge/SOC2-In_Spirit-orange?style=for-the-badge)](#)
+[![Refunds](https://img.shields.io/badge/Refunds_Issued-0-blue?style=for-the-badge)](#)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
 
-**100+ Excuses** • **10 Categories** • **ASCII Art** • **Severity Ratings** • **Interactive Demo**
+**Contextual AI Blames** • **100+ Pre-Generated Excuses** • **Shareable Reports** • **OG Image Previews**
 
-[Live Demo](https://baas.budhathokisagar.com.np/demo) • [API Docs](https://baas.budhathokisagar.com.np/docs) • [Report Bug](https://github.com/sbmagar13/blame-as-a-service/issues)
+[Generate a blame →](https://baas.budhathokisagar.com.np/contextual) • [API Docs](https://baas.budhathokisagar.com.np/docs) • [GitHub Issues](https://github.com/sbmagar13/blame-as-a-service/issues) (please blame someone in the title)
 
 </div>
 
 ---
 
-## 🌟 What's New in v2.0
+## ✨ What's new
 
-- 🎨 **ASCII Art Display** - 4 visualization styles (Box, Banner, Simple, Dramatic)
-- 📊 **Severity Levels** - Minor 🟢, Moderate 🟡, Catastrophic 🔴
-- 🗂️ **10 Categories** - Cosmic, Technical, Management, AI/ML, Cloud, Security & more
-- 💎 **Rich Details** - Quality scores, believability ratings, visual elements
-- 🎭 **100+ Excuses** - Carefully crafted blame excuses
-- 🎰 **Blame Roulette** - Get multiple excuses at once
-- 🌐 **Interactive Demo** - Web UI with animations and confetti
+The latest release introduces **Contextual Blame Generation™** — paste any technical artifact (stack trace, commit message, ticket title, SQL incident) and our model identifies a plausible-adjacent scapegoat tailored to your specific incident. Each blame gets a permanent share URL with rich link previews, ready for Slack, X, or your next post-mortem.
+
+- 🤖 **Contextual AI blames** powered by GPT-OSS 120B via Groq
+- 🔗 **Shareable reports** at `/b/{id}` with OG image cards
+- 🔁 **Regenerate flow** when the first blame doesn't quite hit
+- 🎨 **Premium parody landing page** at `/contextual`
+- 🗂️ **Legacy random-blame API** preserved at `/blame` (now with friends)
+- 📊 **Severity ratings** that mean nothing
+- 🎰 **Blame roulette** for when one excuse isn't enough
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick start
+
+### Generate a contextual blame
 
 ```bash
-# Random blame excuse
+curl -X POST https://baas.budhathokisagar.com.np/blame/contextual \
+  -H "Content-Type: application/json" \
+  -d '{"input": "git push --force origin main"}'
+```
+
+Response:
+
+```json
+{
+  "id": "a3f7b21c",
+  "blame": "The force-push was the inevitable result of the third-party vendor everyone forgot was still in the loop",
+  "cached": false,
+  "model": "openai/gpt-oss-120b"
+}
+```
+
+Open the share page at `https://baas.budhathokisagar.com.np/b/a3f7b21c`. Paste the URL into Slack or X. Watch the unfurl. Watch the laughs. Watch your career arc upward.
+
+### Or use the legacy random API
+
+```bash
 curl https://baas.budhathokisagar.com.np/blame
-
-# Epic ASCII art format
 curl https://baas.budhathokisagar.com.np/blame/ascii?style=dramatic
-
-# Blame from specific category
 curl https://baas.budhathokisagar.com.np/blame/category/cosmic
-
-# Multiple blames
-curl https://baas.budhathokisagar.com.np/blame/multiple?count=5
 ```
 
 ---
 
-## 📖 API Reference
+## 📖 API reference
 
-**Base URL:** `https://baas.budhathokisagar.com.np`  
-**Rate Limit:** 120 requests/minute/IP
+**Base URL:** `https://baas.budhathokisagar.com.np`
 
-### Endpoints
+### Contextual (AI)
+
+| Endpoint | Description | Rate limit |
+|----------|-------------|------------|
+| `POST /blame/contextual` | Generate a contextual blame from input. Body: `{"input": "...", "regenerate": false}` | 20/hour/IP |
+| `GET /blame/contextual/{id}` | Retrieve a generated blame by ID | — |
+| `GET /b/{id}` | Public share page with OG image | 60/hour/IP |
+| `GET /static/og/{id}.png` | The OG image for a blame | — |
+
+### Legacy (random)
 
 | Endpoint | Description |
 |----------|-------------|
@@ -69,36 +96,11 @@ curl https://baas.budhathokisagar.com.np/blame/multiple?count=5
 | `GET /stats` | API statistics |
 | `GET /health` | Health check |
 
-### Example Responses
-
-**`GET /blame`**
-```json
-{
-  "blame": "The developer was coding during a full moon while Mercury was in retrograde",
-  "category": "cosmic",
-  "severity": "catastrophic"
-}
-```
-
-**`GET /blame/rich`**
-```json
-{
-  "blame": "Our AI pair programmer started hallucinating...",
-  "category": "ai_modern",
-  "severity": {
-    "level": "catastrophic",
-    "emoji": "🔴",
-    "name": "CATASTROPHIC DISASTER",
-    "bar": "▓▓▓▓▓▓▓▓▓▓ 100% 🔥💀🔥"
-  },
-  "quality_score": 9,
-  "believability": 7
-}
-```
+Default rate limit on legacy endpoints: 120/minute/IP.
 
 ---
 
-## 📂 Categories
+## 📂 Categories (legacy random API)
 
 | Category | Description |
 |----------|-------------|
@@ -113,36 +115,101 @@ curl https://baas.budhathokisagar.com.np/blame/multiple?count=5
 | ☁️ `cloud` | AWS surprises, serverless rebellion |
 | 🔐 `security` | password123, ROT13 encryption |
 
+The contextual AI endpoint generates fresh scapegoats per request — no fixed categories.
+
 ---
 
-## 🛠️ Self-Hosting
+## 🛠️ Self-hosting
 
 ```bash
 git clone https://github.com/sbmagar13/blame-as-a-service.git
 cd blame-as-a-service
+
+# install dependencies
 pip install -r requirements.txt
+
+# get a free Groq API key from https://console.groq.com (no card required)
+echo "GROQ_API_KEY=gsk_..." > .env
+
+# download fonts for OG image rendering (one-time, optional — falls back if missing)
+mkdir -p static/fonts
+curl -L -o static/fonts/JetBrainsMono-Bold.ttf \
+  "https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/ttf/JetBrainsMono-Bold.ttf"
+curl -L -o static/fonts/JetBrainsMono-Regular.ttf \
+  "https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/ttf/JetBrainsMono-Regular.ttf"
+
+# run
 python blame_app.py
 ```
 
-**Endpoints:** `http://localhost:3000/blame` • `/demo` • `/docs`
+**Endpoints (local):**
+
+- `http://localhost:3000/` — landing
+- `http://localhost:3000/contextual` — contextual blame UI
+- `http://localhost:3000/demo` — legacy demo
+- `http://localhost:3000/docs` — API docs
+
+### Project structure
 
 ```
 blame-as-a-service/
-├── blame_app.py          # FastAPI application
-├── blame_data.py         # 100+ excuses by category & severity
-├── blame_visualizer.py   # ASCII art generators
-├── static/demo.html      # Interactive web demo
+├── blame_app.py          # FastAPI app, legacy random-blame endpoints
+├── blame_data.py         # 100+ static excuses by category & severity
+├── blame_visualizer.py   # ASCII art renderers for legacy endpoints
+├── contextual.py         # Contextual AI blame router (Groq + SQLite)
+├── og_image.py           # 1200x630 share-card renderer (Pillow)
+├── static/
+│   ├── contextual.html   # Premium parody landing page
+│   ├── demo.html         # Legacy demo
+│   ├── fonts/            # JetBrains Mono (download separately)
+│   └── og/               # Generated share images (gitignored)
+├── blames.db             # SQLite cache (gitignored)
 └── requirements.txt
 ```
+
+### Environment variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GROQ_API_KEY` | Yes (for contextual) | Groq API key. Free tier covers 14.4K requests/day on most models. |
+| `PORT` | No | Defaults to 3000. |
+
+The legacy random-blame endpoints work without `GROQ_API_KEY`. Only `/blame/contextual` requires it.
+
+### Switching models
+
+Change `GROQ_MODEL` in `contextual.py`. Tested on the Groq free tier:
+
+| Model | Quality | Speed | Notes |
+|-------|---------|-------|-------|
+| `openai/gpt-oss-120b` | Excellent | Slower | Default. Best instruction following. |
+| `llama-3.3-70b-versatile` | Very good | Medium | Solid fallback. |
+| `llama-3.1-8b-instant` | OK | Very fast | Hallucinates tokens not in input. |
 
 ---
 
 ## 🤝 Contributing
 
+We accept pull requests, blame, and excuses.
+
 1. Fork the repository
-2. Add excuses to `blame_data.py`
+2. Add excuses to `blame_data.py`, refine the system prompt in `contextual.py`, or improve the parody copy
 3. Test with `python blame_app.py`
-4. Submit PR (bonus: blame someone in the description)
+4. Submit a PR (please blame someone in the title — it sets the tone)
+
+---
+
+## 🔒 Security & compliance
+
+| Standard | Status |
+|----------|--------|
+| SOC 2 | In spirit |
+| ISO 27001 | Spiritually |
+| HIPAA | We wish |
+| GDPR | Don't ask |
+| FedRAMP | Vibes only |
+
+For actual concerns, open an issue.
 
 ---
 
@@ -156,8 +223,8 @@ MIT — Do whatever you want, just don't blame yourself.
 
 <div align="center">
 
-**Made with 💀 by developers who definitely didn't break production**
+**Built by developers who definitely didn't break production**
 
-[Live Demo](https://baas.budhathokisagar.com.np/demo) • [API Docs](https://baas.budhathokisagar.com.np/docs) • [GitHub](https://github.com/sbmagar13/blame-as-a-service)
+[Generate a blame →](https://baas.budhathokisagar.com.np/contextual) • [API Docs](https://baas.budhathokisagar.com.np/docs) • [Author](https://blog.budhathokisagar.com.np)
 
 </div>
