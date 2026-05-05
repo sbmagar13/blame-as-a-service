@@ -2,14 +2,17 @@ import os
 import random
 from typing import Optional, List
 from fastapi import FastAPI, Request, Response, status, Query
-from fastapi.responses import JSONResponse, PlainTextResponse, HTMLResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import uvicorn
 
-# Import our blame data and visualizer
+from dotenv import load_dotenv
+load_dotenv()
+
+# Existing blame data and visualizer
 from blame_data import (
     ALL_EXCUSES, BLAME_EXCUSES, CATEGORIES,
     SEVERITY_INFO
@@ -18,6 +21,9 @@ from blame_visualizer import (
     format_blame_ascii, format_blame_rich,
     create_blame_meter, create_multi_blame_display
 )
+
+# NEW: contextual AI blame router
+from contextual import router as contextual_router
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -29,6 +35,7 @@ app = FastAPI(
     with categorization, severity ratings, and epic ASCII art formatting.
 
     ### Features
+    - 🤖 **Contextual AI Blames** (NEW): Roast yourself with stack traces, commits, or tickets
     - 🎨 **ASCII Art Display**: Multiple visual styles for maximum dramatic effect
     - 📊 **Severity Levels**: From "Minor Oopsie" to "Catastrophic Disaster"
     - 🗂️ **10+ Categories**: Cosmic, Technical, Management, AI/ML, and more
@@ -37,12 +44,12 @@ app = FastAPI(
 
     Built by developers who definitely didn't break the build, for developers who definitely won't.
     """,
-    version="2.0.0",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Configure rate limiter: 120 requests per minute per IP
+# Configure rate limiter: 120 requests per minute per IP (default for legacy endpoints)
 limiter = Limiter(key_func=get_remote_address, default_limits=["120/minute"])
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -51,12 +58,15 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 try:
     app.mount("/static", StaticFiles(directory="static"), name="static")
 except:
-    pass  # Static directory might not exist yet
+    pass
+
+# NEW: mount the contextual router
+app.include_router(contextual_router)
 
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def root():
-    """Redirect to demo page or docs"""
+    """Landing page"""
     return """
     <html>
         <head>
@@ -73,6 +83,8 @@ async def root():
                 a { color: #00ff00; text-decoration: none; padding: 10px 20px;
                     border: 2px solid #00ff00; margin: 10px; display: inline-block; }
                 a:hover { background: #00ff00; color: #1a1a1a; }
+                a.featured { background: #00ff00; color: #1a1a1a; }
+                a.featured:hover { background: #00cc00; }
                 .blame { background: #2a2a2a; padding: 20px; margin: 30px auto;
                          max-width: 600px; border: 2px solid #00ff00; }
             </style>
@@ -83,6 +95,9 @@ async def root():
             <div class="blame">
                 <p>"The developer was coding during a full moon while Mercury was in retrograde
                    during a solar eclipse on Thursday the 13th"</p>
+            </div>
+            <div>
+                <a class="featured" href="/contextual">🤖 Blame Me Contextually (NEW)</a>
             </div>
             <div>
                 <a href="/docs">📚 API Documentation</a>
@@ -102,6 +117,16 @@ async def demo_page():
             return f.read()
     except:
         return "<h1>Demo page not found. Make sure static/demo.html exists.</h1>"
+
+
+# NEW: contextual page
+@app.get("/contextual", response_class=HTMLResponse, include_in_schema=False)
+async def contextual_page():
+    """Serve the contextual blame page"""
+    try:
+        return FileResponse("static/contextual.html")
+    except:
+        return "<h1>Contextual page not found. Make sure static/contextual.html exists.</h1>"
 
 
 @app.get("/blame",
@@ -159,7 +184,6 @@ async def get_blame_by_category(request: Request, category: str):
             }
         )
 
-    # Get all excuses from this category
     category_excuses = []
     for severity, excuses in BLAME_EXCUSES[category].items():
         for excuse in excuses:
@@ -190,7 +214,6 @@ async def get_blame_by_severity(request: Request, severity: str):
             }
         )
 
-    # Filter excuses by severity
     severity_excuses = [e for e in ALL_EXCUSES if e["severity"] == severity]
     excuse = random.choice(severity_excuses)
 
@@ -269,8 +292,8 @@ async def get_stats():
         "categories": len(CATEGORIES),
         "category_breakdown": category_counts,
         "severity_breakdown": severity_counts,
-        "rate_limit": "120 requests per minute per IP",
-        "version": "2.0.0"
+        "rate_limit": "120 requests per minute per IP (10/hour for /blame/contextual)",
+        "version": "2.1.0"
     }
 
 
@@ -282,7 +305,8 @@ async def health_check():
     return {
         "status": "operational",
         "message": "Blame service is running smoothly (unlike your code)",
-        "version": "2.0.0"
+        "version": "2.1.0",
+        "groq_configured": bool(os.environ.get("GROQ_API_KEY"))
     }
 
 
@@ -294,22 +318,25 @@ async def ratelimit_handler(request: Request, exc: RateLimitExceeded):
         content={
             "error": "Too many requests, please try again later",
             "blame": "You're making too many mistakes too quickly. Even we can't keep up.",
-            "rate_limit": "120 requests per minute per IP"
         }
     )
 
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 3000))
+    groq_status = "✓ configured" if os.environ.get("GROQ_API_KEY") else "✗ MISSING (set GROQ_API_KEY)"
     print(f"""
     ╔═══════════════════════════════════════════════════════════════╗
-    ║          🎯 BLAME-AS-A-SERVICE v2.0.0 🎯                      ║
+    ║          🎯 BLAME-AS-A-SERVICE v2.1.0 🎯                      ║
     ║                                                               ║
-    ║  Running on: http://localhost:{port:<43} ║
-    ║  Docs: http://localhost:{port}/docs{' ' * 35} ║
-    ║  Demo: http://localhost:{port}/demo{' ' * 35} ║
+    ║  Running on:  http://localhost:{port:<30} ║
+    ║  Docs:        http://localhost:{port}/docs                       ║
+    ║  Demo:        http://localhost:{port}/demo                       ║
+    ║  Contextual:  http://localhost:{port}/contextual                 ║
     ║                                                               ║
-    ║  Because it's NEVER your fault. Ever.                        ║
+    ║  Groq API:    {groq_status:<48} ║
+    ║                                                               ║
+    ║  Because it's NEVER your fault. Ever.                         ║
     ╚═══════════════════════════════════════════════════════════════╝
     """)
     uvicorn.run("blame_app:app", host="0.0.0.0", port=port, reload=True)

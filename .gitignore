@@ -3,3 +3,24 @@
 __pycache__/
 .venv/
 **/.DS_Store
+.env
+
+# Secrets
+.env
+.env.local
+
+# Runtime data
+blames.db
+blames.db-journal
+
+# Generated OG images
+static/og/
+
+# Downloaded fonts (large, license-bound, downloadable in setup)
+static/fonts/*.ttf
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

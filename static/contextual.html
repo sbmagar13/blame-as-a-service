@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Blame-as-a-Service™ — Enterprise Accountability Deflection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0a0c;
+    --bg-elev: #111114;
+    --bg-elev-2: #16161b;
+    --border: #22222a;
+    --border-strong: #2e2e38;
+    --text: #f5f5f7;
+    --text-dim: #9a9aa5;
+    --text-muted: #5a5a65;
+    --accent: #ff5b3a;
+    --accent-soft: rgba(255, 91, 58, 0.12);
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- top nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(10, 10, 12, 0.72);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem;
+  }
+  .brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-mark {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, var(--accent), #c8401e);
+    display: grid; place-items: center; color: #fff;
+    font-family: var(--mono); font-size: 0.7rem; font-weight: 700;
+  }
+  .nav-links { display: flex; gap: 1.75rem; font-size: 0.9rem; color: var(--text-dim); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 0.5rem 1rem; background: var(--text); color: var(--bg);
+    border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    max-width: 1180px; margin: 0 auto;
+    padding: 6rem 1.5rem 4rem;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.9rem; background: var(--accent-soft);
+    border: 1px solid rgba(255, 91, 58, 0.25);
+    border-radius: 100px; color: var(--accent);
+    font-family: var(--mono); font-size: 0.78rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    line-height: 1.05; letter-spacing: -0.02em;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--accent);
+  }
+  .hero p.lede {
+    font-size: 1.15rem; color: var(--text-dim);
+    max-width: 580px; margin: 0 auto 2rem;
+    line-height: 1.55;
+  }
+  .hero-meta {
+    display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+  }
+  .hero-meta span::before { content: '✓ '; color: var(--accent); }
+
+  /* ---------- marquee of testimonials ---------- */
+  .marquee {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden; padding: 1.25rem 0;
+    background: var(--bg-elev);
+  }
+  .marquee-track {
+    display: flex; gap: 4rem; white-space: nowrap;
+    animation: scroll 60s linear infinite;
+    font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim);
+  }
+  .marquee-track span { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .marquee-track strong { color: var(--text); font-weight: 500; }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ---------- main tool section ---------- */
+  .tool-section {
+    max-width: 880px; margin: 0 auto;
+    padding: 5rem 1.5rem;
+  }
+  .tool-header {
+    display: flex; align-items: end; justify-content: space-between;
+    margin-bottom: 1.5rem; gap: 2rem; flex-wrap: wrap;
+  }
+  .tool-header h2 {
+    font-family: var(--serif); font-size: 2.4rem;
+    font-weight: 400; letter-spacing: -0.01em;
+  }
+  .tool-header p { color: var(--text-dim); font-size: 0.95rem; }
+  .tool-meta {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+    display: flex; gap: 1rem;
+  }
+  .tool-meta span::before { content: '● '; color: #4ade80; }
+
+  .tool-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .tool-card-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-elev-2);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim);
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tool-card-header .label { margin-left: 0.6rem; }
+
+  textarea {
+    width: 100%; min-height: 220px;
+    padding: 1.5rem;
+    background: transparent; color: var(--text);
+    border: none; outline: none; resize: vertical;
+    font-family: var(--mono); font-size: 0.92rem; line-height: 1.55;
+  }
+  textarea::placeholder { color: var(--text-muted); }
+
+  .examples {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    padding: 0 1.5rem 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+  .examples-label {
+    width: 100%; font-family: var(--mono); font-size: 0.72rem;
+    color: var(--text-muted); margin-bottom: 0.5rem;
+  }
+  .example {
+    padding: 0.45rem 0.85rem; background: var(--bg-elev-2);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .example:hover {
+    border-color: var(--accent); color: var(--text);
+    background: var(--accent-soft);
+  }
+
+  .tool-actions {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 1rem; align-items: center; justify-content: space-between;
+  }
+  .char-count {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+  }
+  button.primary {
+    padding: 0.85rem 1.75rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 8px;
+    font-family: var(--sans); font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: transform 0.1s, background 0.15s;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+  }
+  button.primary:hover:not(:disabled) { background: #ff6e50; transform: translateY(-1px); }
+  button.primary:active:not(:disabled) { transform: translateY(0); }
+  button.primary:disabled { opacity: 0.5; cursor: wait; }
+  button.primary svg { width: 16px; height: 16px; }
+
+  /* ---------- result ---------- */
+  .result {
+    margin-top: 1.5rem;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+  .result.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .result-tag {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .result-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .result-blame {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.35; font-weight: 400;
+    letter-spacing: -0.005em;
+    margin-bottom: 2rem;
+  }
+  .result-attribution {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted);
+    padding-top: 1.5rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .result-attribution strong { color: var(--text-dim); font-weight: 500; }
+  .result-actions {
+    display: flex; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .result-actions a, .result-actions button {
+    padding: 0.6rem 1rem;
+    background: var(--bg-elev-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: var(--sans); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .result-actions a:hover, .result-actions button:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .result-actions svg { width: 14px; height: 14px; }
+  .error-msg {
+    margin-top: 1rem; padding: 0.85rem 1.25rem;
+    background: rgba(255, 91, 58, 0.08);
+    border: 1px solid rgba(255, 91, 58, 0.25);
+    border-radius: 8px;
+    font-size: 0.9rem; color: var(--accent);
+    display: none;
+  }
+  .error-msg.visible { display: block; }
+
+  /* ---------- stats / metrics ---------- */
+  .metrics {
+    max-width: 1180px; margin: 0 auto;
+    padding: 4rem 1.5rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden;
+  }
+  .metric { padding: 2rem 1.5rem; background: var(--bg); }
+  .metric-num {
+    font-family: var(--serif); font-size: 3rem; line-height: 1;
+    margin-bottom: 0.5rem; letter-spacing: -0.02em;
+  }
+  .metric-label {
+    font-family: var(--mono); font-size: 0.78rem;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* ---------- compliance section ---------- */
+  .compliance {
+    max-width: 1180px; margin: 0 auto;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .compliance-eyebrow {
+    font-family: var(--mono); font-size: 0.78rem;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 1rem;
+  }
+  .compliance h3 {
+    font-family: var(--serif); font-size: 2rem; font-weight: 400;
+    margin-bottom: 2.5rem;
+  }
+  .badges {
+    display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+  }
+  .badge {
+    padding: 1.25rem 1.75rem;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .badge::before {
+    content: ''; width: 28px; height: 28px;
+    background: var(--accent-soft); border-radius: 6px;
+  }
+  .badge strong { color: var(--text); font-weight: 500; }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+  }
+  .footer-inner { max-width: 1180px; margin: 0 auto; }
+  .footer-links {
+    display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-dim);
+  }
+  .footer-links a:hover { color: var(--text); }
+  .footer-fine {
+    font-family: var(--mono); font-size: 0.75rem; color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .footer-fine a { text-decoration: underline; }
+
+  /* ---------- loading shimmer ---------- */
+  .loading-line {
+    height: 1.5rem; border-radius: 4px;
+    background: linear-gradient(90deg, var(--bg-elev-2), var(--border-strong), var(--bg-elev-2));
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    margin-bottom: 0.6rem;
+  }
+  .loading-line:last-child { width: 60%; }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero { padding: 3.5rem 1.5rem 2rem; }
+    .tool-section { padding: 3rem 1rem; }
+    .tool-actions { flex-direction: column; align-items: stretch; }
+    .tool-actions button { width: 100%; justify-content: center; }
+    .result { padding: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================ NAV ================ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <span>Blame<span style="color:var(--text-muted)">/</span>aaS</span>
+    </div>
+    <div class="nav-links">
+      <a href="#product">Product</a>
+      <a href="#compliance">Compliance</a>
+      <a href="/docs">API</a>
+      <a href="https://github.com/sbmagar13/blame-as-a-service">GitHub</a>
+    </div>
+    <a class="nav-cta" href="#tool">Get blamed →</a>
+  </div>
+</nav>
+
+<!-- ================ HERO ================ -->
+<section class="hero">
+  <div class="hero-eyebrow">Series Z · Pre-revenue · Post-shame</div>
+  <h1>The world's leading platform for <em>professional accountability deflection.</em></h1>
+  <p class="lede">
+    Whatever broke, it wasn't you. Our enterprise-grade blame engine generates contextual,
+    plausible-adjacent excuses tailored to your specific incident — at scale.
+  </p>
+  <div class="hero-meta">
+    <span>SOC 2 compliant in spirit</span>
+    <span>Trusted by 0 Fortune 500 companies</span>
+    <span>Zero-shame architecture</span>
+  </div>
+</section>
+
+<!-- ================ MARQUEE ================ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span><strong>"Saved my career."</strong> — Engineer who deleted prod</span>
+    <span><strong>"It blamed Mercury. The board accepted it."</strong> — VP Engineering</span>
+    <span><strong>"My PIP was reversed."</strong> — Anonymous staff engineer</span>
+    <span><strong>"Better than therapy."</strong> — Sole DevOps engineer</span>
+    <span><strong>"The intern took the fall."</strong> — Senior architect</span>
+    <span><strong>"Worth every cent we paid (zero)."</strong> — CTO</span>
+    <span><strong>"Saved my career."</strong> — Engineer who deleted prod</span>
+    <span><strong>"It blamed Mercury. The board accepted it."</strong> — VP Engineering</span>
+    <span><strong>"My PIP was reversed."</strong> — Anonymous staff engineer</span>
+    <span><strong>"Better than therapy."</strong> — Sole DevOps engineer</span>
+    <span><strong>"The intern took the fall."</strong> — Senior architect</span>
+    <span><strong>"Worth every cent we paid (zero)."</strong> — CTO</span>
+  </div>
+</div>
+
+<!-- ================ TOOL ================ -->
+<section class="tool-section" id="tool">
+  <div class="tool-header">
+    <div>
+      <h2>Generate your blame.</h2>
+      <p>Paste any technical artifact below. Our model will identify who to blame.</p>
+    </div>
+    <div class="tool-meta">
+      <span>Engine online</span>
+      <span>p99 latency: 800ms</span>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-header">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="label">incident.txt</span>
+    </div>
+    <textarea id="input" placeholder="Paste a stack trace, error message, commit, SQL, or a Jira ticket title.
+
+e.g.
+TypeError: Cannot read property 'map' of undefined
+  at UserList.jsx:47
+  at renderList (App.jsx:204)"></textarea>
+
+    <div class="examples">
+      <div class="examples-label">// QUICK START — TRY ONE</div>
+      <div class="example" data-fill="TypeError: Cannot read property 'map' of undefined at UserList.jsx:47">stack trace</div>
+      <div class="example" data-fill="fix: temporary workaround for prod (will revert later) - committed Friday 5:47 PM">friday commit</div>
+      <div class="example" data-fill="DROP TABLE users; -- this was supposed to be a SELECT, oops">SQL incident</div>
+      <div class="example" data-fill="JIRA-4271: investigate why orders disappear from cart after midnight">midnight bug</div>
+      <div class="example" data-fill="OutOfMemoryError: Java heap space at com.eventlogic.SearchService.indexAll(SearchService.java:892)">OOM</div>
+      <div class="example" data-fill="git push --force origin main">force push</div>
+    </div>
+
+    <div class="tool-actions">
+      <span class="char-count" id="char-count">0 / 4000 characters</span>
+      <button class="primary" id="submit">
+        <span>Generate blame</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="error-msg" id="error"></div>
+
+  <div class="result" id="result">
+    <div class="result-tag">BLAME REPORT · OFFICIAL</div>
+    <div class="result-blame" id="blame-text"></div>
+    <div class="result-attribution">
+      <span><strong>Filed by:</strong> Blame Engine v2.1 · <span id="model-name">—</span></span>
+      <span><strong>Confidence:</strong> Suspiciously high</span>
+    </div>
+    <div class="result-actions">
+      <a id="share-link" href="#" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        Open report
+      </a>
+      <button id="copy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span id="copy-text">Copy link</span>
+      </button>
+      <button id="regenerate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5"/></svg>
+        Regenerate
+      </button>
+      <a id="tweet" href="#" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        Share to X
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================ METRICS ================ -->
+<section class="metrics">
+  <div class="metric">
+    <div class="metric-num" id="m-blames">∞</div>
+    <div class="metric-label">Blames generated</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">99.97%</div>
+    <div class="metric-label">Plausibility rating</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">0</div>
+    <div class="metric-label">Refunds issued</div>
+  </div>
+  <div class="metric">
+    <div class="metric-num">100%</div>
+    <div class="metric-label">Not your fault</div>
+  </div>
+</section>
+
+<!-- ================ COMPLIANCE ================ -->
+<section class="compliance" id="compliance">
+  <div class="compliance-eyebrow">Enterprise-ready</div>
+  <h3>Audited by no one. Trusted by everyone.</h3>
+  <div class="badges">
+    <div class="badge"><span><strong>SOC 2</strong> · in spirit</span></div>
+    <div class="badge"><span><strong>ISO 27001</strong> · spiritually</span></div>
+    <div class="badge"><span><strong>HIPAA</strong> · we wish</span></div>
+    <div class="badge"><span><strong>GDPR</strong> · don't ask</span></div>
+    <div class="badge"><span><strong>FedRAMP</strong> · vibes only</span></div>
+  </div>
+</section>
+
+<!-- ================ FOOTER ================ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/docs">API</a>
+      <a href="/demo">Legacy demo</a>
+      <a href="https://github.com/sbmagar13/blame-as-a-service">GitHub</a>
+      <a href="/health">Status</a>
+      <a href="/stats">Stats</a>
+    </div>
+    <div class="footer-fine">
+      © 2026 Blame Industries Incorporated LLC GmbH Pvt. Ltd. — All rights deflected.<br>
+      Built with regret by <a href="https://blog.budhathokisagar.com.np">someone who definitely didn't break production</a>.<br>
+      No accountability was harmed in the making of this product.
+    </div>
+  </div>
+</footer>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const input = $('input');
+  const submit = $('submit');
+  const result = $('result');
+  const blameText = $('blame-text');
+  const errorEl = $('error');
+  const shareLink = $('share-link');
+  const tweetLink = $('tweet');
+  const copyBtn = $('copy');
+  const copyText = $('copy-text');
+  const charCount = $('char-count');
+  const blamesCounter = $('m-blames');
+  const modelName = $('model-name');
+  const regenerateBtn = $('regenerate');
+
+  // example fillers
+  document.querySelectorAll('.example').forEach(el => {
+    el.addEventListener('click', () => {
+      input.value = el.dataset.fill;
+      input.focus();
+      updateCharCount();
+    });
+  });
+
+  // char counter
+  function updateCharCount() {
+    const n = input.value.length;
+    charCount.textContent = `${n.toLocaleString()} / 4,000 characters`;
+    charCount.style.color = n > 4000 ? 'var(--accent)' : '';
+  }
+  input.addEventListener('input', updateCharCount);
+
+  // fake counter that increments randomly while idle
+  let counter = Math.floor(40000 + Math.random() * 60000);
+  function bumpCounter() {
+    counter += Math.floor(1 + Math.random() * 4);
+    blamesCounter.textContent = counter.toLocaleString();
+  }
+  bumpCounter();
+  setInterval(bumpCounter, 2400);
+  
+  // regenerate
+  regenerateBtn.addEventListener('click', () => generate(true));
+
+  // submit handler
+  submit.addEventListener('click', () => generate(false));
+  input.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') generate();
+  });
+
+  function formatModelName(modelId) {
+  if (!modelId) return 'Unknown';
+  // openai/gpt-oss-120b -> GPT-OSS 120B
+  // llama-3.1-8b-instant -> Llama 3.1 8B Instant
+  // meta-llama/llama-4-scout-17b-16e-instruct -> Llama 4 Scout 17B
+  const cleaned = modelId.split('/').pop();
+    return cleaned
+        .split('-')
+        .map(part => /^\d/.test(part) ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+    }
+
+//   const MODEL_LABELS = {
+//     'openai/gpt-oss-120b': 'GPT-OSS 120B',
+//     'openai/gpt-oss-20b': 'GPT-OSS 20B',
+//     'llama-3.1-8b-instant': 'Llama 3.1 8B',
+//     'llama-3.3-70b-versatile': 'Llama 3.3 70B',
+//     'meta-llama/llama-4-scout-17b-16e-instruct': 'Llama 4 Scout 17B',
+//     'qwen/qwen3-32b': 'Qwen3 32B',
+//     };
+
+//   function formatModelName(modelId) {
+//     return MODEL_LABELS[modelId] || modelId || 'Unknown';
+//   }
+
+  async function generate(regenerate = false) {
+    const text = input.value.trim();
+    if (!text) {
+        input.focus();
+        return;
+    }
+    if (text.length > 4000) {
+        showError('Input exceeds 4,000 characters. Please blame more concisely.');
+        return;
+    }
+    errorEl.classList.remove('visible');
+    submit.disabled = true;
+    regenerateBtn.disabled = true;
+    submit.querySelector('span').textContent = 'Filing report...';
+    showLoadingResult();
+
+    try {
+        const res = await fetch('/blame/contextual', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({input: text, regenerate})
+        });
+        if (res.status === 429) {
+        hideResult();
+        showError('Rate limit reached. The blame engine blames you for trying too fast. Try again in an hour.');
+        return;
+        }
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            let msg = 'Generation failed.';
+            if (typeof errBody.detail === 'string') {
+            msg = errBody.detail;
+            } else if (Array.isArray(errBody.detail) && errBody.detail.length) {
+            // Pydantic validation error
+            msg = errBody.detail.map(e => e.msg || JSON.stringify(e)).join('; ');
+            }
+            hideResult();
+            showError(msg);
+            return;
+        }
+        const data = await res.json();
+        const url = window.location.origin + '/b/' + data.id;
+        blameText.textContent = data.blame;
+        modelName.textContent = formatModelName(data.model);
+        shareLink.href = url;
+        tweetLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.blame)}&url=${encodeURIComponent(url)}`;
+        copyBtn.onclick = () => {
+        navigator.clipboard.writeText(url);
+        copyText.textContent = 'Copied ✓';
+        setTimeout(() => copyText.textContent = 'Copy link', 1800);
+        };
+        result.classList.add('visible');
+        counter += 1;
+        blamesCounter.textContent = counter.toLocaleString();
+        if (!regenerate) {
+        result.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+    } catch (e) {
+        hideResult();
+        showError('Network error. The blame engine blames the network.');
+    } finally {
+        submit.disabled = false;
+        regenerateBtn.disabled = false;
+        submit.querySelector('span').textContent = 'Generate blame';
+    }
+    }
+
+  function showLoadingResult() {
+    blameText.innerHTML = '<div class="loading-line"></div><div class="loading-line"></div><div class="loading-line"></div>';
+    result.classList.add('visible');
+  }
+  function hideResult() {
+    result.classList.remove('visible');
+  }
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.classList.add('visible');
+  }
+
+  updateCharCount();
+</script>
+</body>
+</html>
