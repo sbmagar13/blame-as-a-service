@@ -28,7 +28,7 @@ The latest release introduces **Contextual Blame Generation™** - paste any tec
 - 🤖 **Contextual AI blames** powered by GPT-OSS 120B via Groq
 - 🔗 **Shareable reports** at `/b/{id}` with OG image cards
 - 🔁 **Regenerate flow** when the first blame doesn't quite hit
-- 🎨 **Premium parody landing page** at `/contextual`
+- 🎨 **Premium landing page** at `/contextual`😁
 - 🗂️ **Legacy random-blame API** preserved at `/blame` (now with friends)
 - 📊 **Severity ratings** that mean nothing
 - 🎰 **Blame roulette** for when one excuse isn't enough
@@ -159,7 +159,7 @@ blame-as-a-service/
 ├── contextual.py         # Contextual AI blame router (Groq + SQLite)
 ├── og_image.py           # 1200x630 share-card renderer (Pillow)
 ├── static/
-│   ├── contextual.html   # Premium parody landing page
+│   ├── contextual.html   # Premium landing page 😁
 │   ├── demo.html         # Legacy demo
 │   ├── fonts/            # JetBrains Mono (download separately)
 │   └── og/               # Generated share images (gitignored)
