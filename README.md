@@ -23,7 +23,7 @@
 
 ## ✨ What's new
 
-The latest release introduces **Contextual Blame Generation™** — paste any technical artifact (stack trace, commit message, ticket title, SQL incident) and our model identifies a plausible-adjacent scapegoat tailored to your specific incident. Each blame gets a permanent share URL with rich link previews, ready for Slack, X, or your next post-mortem.
+The latest release introduces **Contextual Blame Generation™** - paste any technical artifact (stack trace, commit message, ticket title, SQL incident) and our model identifies a plausible-adjacent scapegoat tailored to your specific incident. Each blame gets a permanent share URL with rich link previews, ready for Slack, X, or your next post-mortem.
 
 - 🤖 **Contextual AI blames** powered by GPT-OSS 120B via Groq
 - 🔗 **Shareable reports** at `/b/{id}` with OG image cards
